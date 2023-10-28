@@ -18,28 +18,32 @@ export class ChatsGateway
 
   // 최초 구현 시
   afterInit(@ConnectedSocket() socket: Socket): any {
-    this.logger.log(`init`);
-    this.logger.log(`${socket.id}`);
+    this.logger.log(`init ${socket.id}`);
   }
 
   // 사용자 접속 시
   handleConnection(@ConnectedSocket() socket: Socket): any {
-    console.log('handle connection');
     this.logger.log(`Client connected: ${socket.id}`);
   }
 
   // 사용자 접속 종료 시
   handleDisconnect(client: any): any {
-    console.log(client);
+    console.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage('new_user')
   handleNewUser(
     @MessageBody() username: string,
     @ConnectedSocket() socket: Socket,
-  ): void {
+  ): string {
     console.log(username);
     console.log(socket.id);
-    socket.emit('hello_user', `hello ${username}!`);
+
+    // 연결된 모든 소켓에 메세지 전송
+    socket.broadcast.emit('user_connected', `${username}`);
+
+    socket.emit('hello_user', `${username}`);
+
+    return 'new_user event received';
   }
 }

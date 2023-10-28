@@ -8,14 +8,26 @@ const chattingBoxEl = getElementById('chatting_box');
 const chatFormEl = getElementById('chat_form');
 
 // functions
-const helloUser = () => {
+function helloUser() {
   const userName = prompt('What is your name?');
-  socket.emit('new_user', userName); // emit('event', data)
-  console.log(userName);
-  socket.on('hello_user', (data) => {
+  socket.emit('new_user', userName, (data) => {
     console.log(data);
-  });
-};
+  }); // emit('event', data, callback)
+}
+
+function drawHelloStranger(username) {
+  helloStrangerEl.innerText = `Hello ${username}!`;
+}
+
+// global socket handler
+socket.on('user_connected', (data) => {
+  console.log(`${data} connected`);
+});
+
+socket.on('hello_user', (data) => {
+  console.log(data);
+  drawHelloStranger(data);
+});
 
 // init
 function init() {
