@@ -46,4 +46,12 @@ export class ChatsGateway
 
     return 'new_user event received';
   }
+
+  @SubscribeMessage('send_message')
+  recieveMessage(
+    @MessageBody() message: string,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    socket.broadcast.emit('new_chat', { message, username: socket.id });
+  }
 }
