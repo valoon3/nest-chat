@@ -59,9 +59,13 @@ socket.on('new_chat', (res) => {
   drawMessage(message);
 });
 
+socket.on('disconnected_user', (username) =>
+  drawMessage(`${username} bye .....`),
+);
+
 // init
 function init() {
-  // helloUser();
+  helloUser();
   // 이벤트 연결
   chatFormEl.addEventListener('submit', handleSubmit);
 }
