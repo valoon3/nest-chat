@@ -56,6 +56,7 @@ socket.on('hello_user', (data) => {
 socket.on('new_chat', (res) => {
   const { message, username } = res;
   // console.log(message, username);
+  console.log(username);
   drawMessage(message);
 });
 
