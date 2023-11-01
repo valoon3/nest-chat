@@ -14,7 +14,7 @@ const handleSubmit = (e) => {
   if (message.length) {
     socket.emit('send_message', message);
     // 화면에다가 그리기
-    drawMessage(message);
+    drawMessage(`me : ${message}`);
     e.target.elements[0].value = '';
   }
 };
@@ -24,6 +24,7 @@ function helloUser() {
   const userName = prompt('What is your name?');
   socket.emit('new_user', userName, (data) => {
     console.log(data);
+    drawHelloStranger(data);
   }); // emit('event', data, callback)
 }
 
@@ -31,13 +32,22 @@ function drawHelloStranger(username) {
   helloStrangerEl.innerText = `Hello ${username}!`;
 }
 
-const drawMessage = (message) => {
+const drawMessage = (message, isMe = false) => {
   const wrapperChatBox = document.createElement('div');
-  const chatBox = `
-  <div>
-    ${message}
-  </div>
-  `;
+  wrapperChatBox.className = 'clearfix';
+  let chatBox;
+  if (!isMe)
+    chatBox = `
+    <div class='bg-gray-300 w-3/4 mx-4 my-2 p-2 rounded-lg clearfix break-all'>
+      ${message}
+    </div>
+    `;
+  else
+    chatBox = `
+    <div class='bg-white w-3/4 ml-auto mr-4 my-2 p-2 rounded-lg clearfix break-all'>
+      ${message}
+    </div>
+    `;
 
   wrapperChatBox.innerHTML = chatBox;
   chattingBoxEl.append(wrapperChatBox);
@@ -46,6 +56,7 @@ const drawMessage = (message) => {
 // global socket handler
 socket.on('user_connected', (data) => {
   console.log(`${data} connected`);
+  drawMessage(`${data} connected!`, true);
 });
 
 socket.on('hello_user', (data) => {
@@ -55,13 +66,11 @@ socket.on('hello_user', (data) => {
 
 socket.on('new_chat', (res) => {
   const { message, username } = res;
-  // console.log(message, username);
-  console.log(username);
-  drawMessage(message);
+  drawMessage(`${username} : ${message}`, true);
 });
 
 socket.on('disconnected_user', (username) =>
-  drawMessage(`${username} bye .....`),
+  drawMessage(`${username} bye .....`, true),
 );
 
 // init

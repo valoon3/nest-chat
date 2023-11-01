@@ -64,7 +64,7 @@ export class ChatsGateway
 
     socket.emit('hello_user', `${username}`);
 
-    return 'new_user event received';
+    return username;
   }
 
   @SubscribeMessage('send_message')
